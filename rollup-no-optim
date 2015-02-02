@@ -1,0 +1,4 @@
+A = LOAD 'input-real-2' AS (year:int, month:int, day:int, hour:int, minute:int, second:int, payload: int);
+B = CUBE A BY ROLLUP(year, month, day, hour, minute, second);
+C = FOREACH B GENERATE group, SUM(cube.payload);
+STORE C INTO 'output3';

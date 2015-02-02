@@ -1,0 +1,5 @@
+A = LOAD 'input-real' AS (year:int, month:int, day:int, hour:int, minute:int, second:int);
+B = CUBE A BY ROLLUP(year, month, day, hour, minute, second) CHUNKSIZE 1048576 RATE 0.5;
+C = FOREACH B GENERATE  group, COUNT_STAR(cube) PARALLEL 20;
+STORE C INTO 'output/test-embed/friendly';
+

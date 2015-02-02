@@ -1,0 +1,11 @@
+A = LOAD 'output' AS (a0:tuple(year:long, month:long, day:long, hour:long, minute:long, second:long, index: int),   payload: long);
+SPLIT A INTO FRIENDLY IF a0.index < 0, UNFRIENDLY OTHERWISE;
+Y = FOREACH FRIENDLY GENERATE FLATTEN(a0), payload as p;
+BU = GROUP Y BY ($0, $1, $2, $3, $4, $5);
+CU = FOREACH BU GENERATE group, SUM(Y.p);
+STORE CU INTO 'output2/friendly';
+STORE FRIENDLY INTO 'output2/friendly';
+X = FOREACH UNFRIENDLY GENERATE FLATTEN(a0), payload as p;
+B = GROUP X BY ($0, $1, $2, $3, $4, $5);
+C = FOREACH B GENERATE group, SUM(X.p);
+STORE C INTO 'output2/unfriendly';
